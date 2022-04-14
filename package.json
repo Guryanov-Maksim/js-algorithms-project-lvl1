@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "search engine",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,7 +18,8 @@
   },
   "homepage": "https://github.com/Guryanov-Maksim/js-algorithms-project-lvl1#readme",
   "devDependencies": {
-    "eslint": "^8.11.0",
-    "eslint-config-airbnb": "^19.0.4"
+    "eslint": "^8.13.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
   }
 }
