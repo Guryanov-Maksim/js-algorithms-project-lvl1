@@ -1,0 +1,23 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "search engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Guryanov-Maksim/js-algorithms-project-lvl1.git"
+  },
+  "author": "Maksim Guryanov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Guryanov-Maksim/js-algorithms-project-lvl1/issues"
+  },
+  "homepage": "https://github.com/Guryanov-Maksim/js-algorithms-project-lvl1#readme",
+  "devDependencies": {
+    "eslint": "^8.11.0",
+    "eslint-config-airbnb": "^19.0.4"
+  }
+}
