@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import pluralize from 'pluralize';
 
 const buildInvertedIndex = (docs) => {
   if (docs.length === 0) {
@@ -8,7 +9,8 @@ const buildInvertedIndex = (docs) => {
   const allWordsInDocs = docs.reduce((acc, { text }) => {
     const words = [...text.match(/[\w+']+/gi)];
     words.forEach((word) => {
-      acc.add(word.toLowerCase());
+      const singleWord = pluralize.singular(word.toLowerCase());
+      acc.add(singleWord);
     });
     return acc;
   }, new Set());
@@ -17,7 +19,7 @@ const buildInvertedIndex = (docs) => {
     let newAcc = { ...acc };
     for (let i = 0; i < docs.length; i += 1) {
       const { id, text } = docs[i];
-      const words = [...text.match(/[\w+']+/gi)].map((w) => w.toLowerCase());
+      const words = [...text.match(/[\w+']+/gi)].map((w) => pluralize.singular(w.toLowerCase()));
       if (words.includes(word)) {
         const count = words.filter((w) => w === word);
         const { ids, counts } = _.get(newAcc, word, { ids: [], counts: { [id]: 0 } });
@@ -53,7 +55,7 @@ const buildInvertedIndex = (docs) => {
   return Object.fromEntries(docDataWithTfIdf);
 };
 
-const rankDocuments = (index, terms) => {
+const rankDocuments = (index, targetWords) => {
   const iter = (wordsToMatch, result) => {
     if (wordsToMatch.length === 0) {
       return _.union(...result);
@@ -78,7 +80,7 @@ const rankDocuments = (index, terms) => {
     return iter(wordsToMatch.slice(0, wordsToMatch.length - 1), [...result, ids]);
   };
 
-  return iter([...terms], []);
+  return iter(targetWords, []);
 };
 
 const buildSearchEngine = (docs = []) => {
@@ -87,10 +89,11 @@ const buildSearchEngine = (docs = []) => {
   const search = (token) => {
     console.log(token);
     const terms = token.match(/\w+/g);
+    const singleWords = [...terms].map((word) => pluralize.singular(word.toLowerCase()));
     if (!terms) {
       return [];
     }
-    const rankedDocsIds = rankDocuments(index, terms);
+    const rankedDocsIds = rankDocuments(index, singleWords);
     return rankedDocsIds;
   };
 
