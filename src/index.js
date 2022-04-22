@@ -48,6 +48,7 @@ const buildInvertedIndex = (docs) => {
 
     return [word, { ids, ftIdfs: Object.fromEntries(ftIdfs) }];
   });
+  console.log(Object.fromEntries(docDataWithTfIdf));
 
   return Object.fromEntries(docDataWithTfIdf);
 };
