@@ -89,10 +89,10 @@ const buildSearchEngine = (docs = []) => {
   const search = (token) => {
     console.log(token);
     const terms = token.match(/\w+/g);
-    const singleWords = [...terms].map((word) => pluralize.singular(word.toLowerCase()));
     if (!terms) {
       return [];
     }
+    const singleWords = [...terms].map((word) => pluralize.singular(word.toLowerCase()));
     const rankedDocsIds = rankDocuments(index, singleWords);
     return rankedDocsIds;
   };
