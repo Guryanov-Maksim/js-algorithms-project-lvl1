@@ -1,35 +1,33 @@
 import _ from 'lodash';
 
 const buildInvertedIndex = (docs) => {
-  // const serchedDocs = new RegExp(`\\b[${term}\`](?!(\\w+))\\b`, 'gi');
-  const result = docs.reduce((acc, { id, text }) => {
+  if (docs.length === 0) {
+    return {};
+  }
+
+  const allWordsInDocs = docs.reduce((acc, { text }) => {
     const words = [...text.match(/[\w+']+/gi)];
+    words.forEach((word) => {
+      acc.add(word.toLowerCase());
+    });
+    return acc;
+  }, new Set());
+
+  const docDataWithTermFrequency = [...allWordsInDocs].reduce((acc, word) => {
     let newAcc = { ...acc };
-    for (let i = 0; i < words.length; i += 1) {
-      const word = words[i].toLowerCase();
-      if (newAcc[word]) {
-        const { ids, inclusionCounts } = newAcc[word];
-        ids.add(id);
-        const prevCount = _.get(inclusionCounts, id, 0);
+    for (let i = 0; i < docs.length; i += 1) {
+      const { id, text } = docs[i];
+      const words = [...text.match(/[\w+']+/gi)].map((w) => w.toLowerCase());
+      if (words.includes(word)) {
+        const count = words.filter((w) => w === word);
+        const { ids, counts } = _.get(newAcc, word, { ids: [], counts: { [id]: 0 } });
         newAcc = {
           ...newAcc,
           [word]: {
-            ids,
-            inclusionCounts: {
-              ...inclusionCounts,
-              [id]: prevCount + 1,
-            },
-          },
-        };
-      } else {
-        const ids = new Set();
-        ids.add(id);
-        newAcc = {
-          ...newAcc,
-          [word]: {
-            ids,
-            inclusionCounts: {
-              [id]: 1,
+            ids: [...ids, id],
+            counts: {
+              ...counts,
+              [id]: count.length / words.length,
             },
           },
         };
@@ -39,7 +37,19 @@ const buildInvertedIndex = (docs) => {
     return newAcc;
   }, {});
 
-  return result;
+  const docDataWithTfIdf = Object.entries(docDataWithTermFrequency).map(([word, data]) => {
+    const { ids, counts } = data;
+    const idf = Math.log(docs.length / ids.length);
+    const tfs = Object.entries(counts);
+    const ftIdfs = tfs.map(([id, tf]) => {
+      const tfIdf = tf * idf;
+      return [id, tfIdf];
+    });
+
+    return [word, { ids, ftIdfs: Object.fromEntries(ftIdfs) }];
+  });
+
+  return Object.fromEntries(docDataWithTfIdf);
 };
 
 const rankDocuments = (index, terms) => {
@@ -55,7 +65,7 @@ const rankDocuments = (index, terms) => {
 
     const docIdsWithWordCount = docIdsWithAllWords.map((id) => {
       const totalWordsCount = wordsToMatch.reduce((acc, word) => {
-        const newAcc = acc + index[word].inclusionCounts[id];
+        const newAcc = acc + index[word].ftIdfs[id];
         return newAcc;
       }, 0);
       return ({ id, totalWordsCount });
