@@ -4,7 +4,7 @@ const buildInvertedIndex = (docs) => {
   if (docs.length === 0) {
     return {};
   }
-
+  console.log(docs);
   const allWordsInDocs = docs.reduce((acc, { text }) => {
     const words = [...text.match(/[\w+']+/gi)];
     words.forEach((word) => {
@@ -72,6 +72,7 @@ const rankDocuments = (index, terms) => {
       return ({ id, totalWordsCount });
     }, []);
     const sortedIds = docIdsWithWordCount.sort((a, b) => b.totalWordsCount - a.totalWordsCount);
+    console.log(sortedIds);
     const ids = sortedIds.map((item) => item.id);
 
     return iter(wordsToMatch.slice(0, wordsToMatch.length - 1), [...result, ids]);
@@ -84,6 +85,7 @@ const buildSearchEngine = (docs = []) => {
   const index = buildInvertedIndex(docs);
 
   const search = (token) => {
+    console.log(token);
     const terms = token.match(/\w+/g);
     if (!terms) {
       return [];
