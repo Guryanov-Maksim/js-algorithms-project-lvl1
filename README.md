@@ -23,8 +23,8 @@ It is as simple as ride a bike
 
       const docs = [doc1, doc2, doc3];
 
-      const searchEngine = buildSearchEngine(docs);
+      const searchEngine = buildSearchEngine(docs);  // save documents
 
-      cosnt result = searchEngine.search('shoot at me'); 
+      cosnt result = searchEngine.search('shoot at me');  // find a phrase
       
-      console.log(result);  // ['doc2', 'doc1']
+      console.log(result);  // ['doc2', 'doc1']  // use a search result
