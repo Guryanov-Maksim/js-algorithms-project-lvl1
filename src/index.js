@@ -40,7 +40,7 @@ const buildInvertedIndex = (documents) => {
 
   const docDataWithTfIdf = Object.entries(parsedDocsData).map(([word, data]) => {
     const { ids, matchedDocsData } = data;
-    const idf = Math.log(documents.length / [...ids].length);
+    const idf = Math.log(documents.length / ids.size);
     const ftIdfs = Object.entries(matchedDocsData).map(([id, { wordCountInDoc, wordsInDoc }]) => {
       const tf = wordCountInDoc / wordsInDoc;
       const tfIdf = tf * idf;
